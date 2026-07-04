@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ArepaJobs</title>
+  <meta name="description" content="ArepaJobs: buscador de trabajo remoto compatible con Venezuela, con filtros por idioma, pago, interacción social, dedicación, experiencia y permiso laboral." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111a32;
+      --panel2:#16213d;
+      --text:#eef4ff;
+      --muted:#aab6d3;
+      --brand:#7dd3fc;
+      --brand2:#c4b5fd;
+      --ok:#86efac;
+      --warn:#fde68a;
+      --danger:#fca5a5;
+      --line:rgba(255,255,255,.13);
+      --shadow:0 22px 55px rgba(0,0,0,.32);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:radial-gradient(circle at 8% 5%, rgba(125,211,252,.22), transparent 34%),
+                 radial-gradient(circle at 88% 12%, rgba(196,181,253,.22), transparent 30%),
+                 radial-gradient(circle at 60% 92%, rgba(134,239,172,.08), transparent 25%),
+                 var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1220px;margin:0 auto;padding:28px 18px 50px}
+    header{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;margin-bottom:20px;align-items:stretch}
+    .hero,.side-card,.panel{background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+    .hero{padding:30px}
+    .hero h1{font-size:clamp(30px,4vw,52px);line-height:1.03;margin:0 0 12px;letter-spacing:-.045em}
+    .hero p{color:var(--muted);font-size:17px;line-height:1.6;max-width:850px;margin:0 0 18px}
+    .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .badge{font-size:13px;color:#e8f7ff;background:rgba(125,211,252,.13);border:1px solid rgba(125,211,252,.30);padding:8px 10px;border-radius:999px}
+    .quick-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+    .quick-chip{border:1px solid rgba(125,211,252,.35);background:rgba(125,211,252,.09);color:#dff7ff;border-radius:999px;padding:7px 10px;font-size:12.5px;font-weight:800;cursor:pointer}
+    .quick-chip:hover{border-color:rgba(125,211,252,.7);background:rgba(125,211,252,.16)}
+    .side-card{padding:21px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+    .side-card h2{font-size:18px;margin:0 0 8px}
+    .stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .stat div{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:15px;padding:13px}
+    .stat strong{display:block;font-size:25px;color:var(--brand)}
+    .stat span{color:var(--muted);font-size:13px}
+    .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+    .tab{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:750}
+    .tab.active{background:linear-gradient(90deg, rgba(125,211,252,.24), rgba(196,181,253,.23));border-color:rgba(125,211,252,.58)}
+    .panel{padding:22px;margin-bottom:18px}
+    .panel h2{margin:0 0 8px;font-size:22px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .field{grid-column:span 3;display:flex;flex-direction:column;gap:7px}
+    .field.wide{grid-column:span 5}.field.xwide{grid-column:span 7}.field.small{grid-column:span 2}.field.full{grid-column:span 12}
+    label{font-weight:750;font-size:13px;color:#e3f2ff}
+    input,select,textarea{width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--line);background:rgba(2,6,23,.52);color:var(--text);outline:none;font:inherit}
+    textarea{min-height:95px;resize:vertical;line-height:1.5}
+    input:focus,select:focus,textarea:focus{border-color:rgba(125,211,252,.78);box-shadow:0 0 0 4px rgba(125,211,252,.11)}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:15px}
+    button,.btn{border:0;border-radius:13px;padding:12px 15px;font-weight:850;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(90deg, var(--brand), var(--brand2));color:#07111f}
+    button.secondary,.btn.secondary{background:rgba(255,255,255,.085);color:var(--text);border:1px solid var(--line)}
+    button.ghost,.btn.ghost{background:transparent;color:var(--brand);border:1px solid rgba(125,211,252,.46)}
+    button.danger{background:rgba(252,165,165,.12);color:#fecaca;border:1px solid rgba(252,165,165,.38)}
+    .hint{color:var(--muted);font-size:13.5px;line-height:1.48}.mini{font-size:12.5px;color:var(--muted);line-height:1.45}
+    .results{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+    .job,.site,.track-row,.role-card,.warning,.fit-card,.source-card{background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:16px;padding:16px}
+    .job h3,.site h3,.role-card h3,.fit-card h3,.source-card h3{margin:0 0 8px;font-size:17px}
+    .job p,.site p,.role-card p,.fit-card p,.source-card p{margin:6px 0;color:var(--muted);line-height:1.48}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{font-size:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 8px;color:#e7efff}.pill.ok{border-color:rgba(134,239,172,.45);color:#dcfce7;background:rgba(134,239,172,.08)}.pill.warn{border-color:rgba(253,230,138,.5);color:#fef3c7;background:rgba(253,230,138,.08)}.pill.bad{border-color:rgba(252,165,165,.46);color:#fecaca;background:rgba(252,165,165,.08)}
+    .job-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.site-grid,.role-grid,.fit-grid,.source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.check-item{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:14px;padding:13px;color:var(--muted);line-height:1.45}.check-item input{width:auto;margin-top:3px;accent-color:#7dd3fc}.hidden{display:none!important}.loading{padding:18px;border:1px dashed rgba(125,211,252,.45);border-radius:16px;color:var(--brand);margin-top:15px}.error{padding:14px;border:1px solid rgba(252,165,165,.5);border-radius:16px;color:#fecaca;background:rgba(252,165,165,.08);margin-top:15px}.success{padding:14px;border:1px solid rgba(134,239,172,.5);border-radius:16px;color:#dcfce7;background:rgba(134,239,172,.08);margin-top:15px}.info{padding:14px;border:1px solid rgba(125,211,252,.5);border-radius:16px;color:#dff7ff;background:rgba(125,211,252,.08);margin-top:15px}.track-row{display:grid;grid-template-columns:1.3fr .9fr 1fr .8fr .75fr auto;gap:10px;align-items:center;margin-top:10px}.track-row input,.track-row select{padding:10px}.footer{color:var(--muted);font-size:13px;text-align:center;margin-top:28px;line-height:1.6}.copy-box{background:rgba(2,6,23,.58);border:1px solid var(--line);border-radius:14px;padding:14px;color:#eaf2ff;white-space:pre-wrap;line-height:1.5}.warning{border-color:rgba(253,230,138,.45);background:rgba(253,230,138,.08)}.warning strong{color:var(--warn)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}.score{font-size:28px;color:var(--brand);font-weight:900;letter-spacing:-.02em}.divider{height:1px;background:var(--line);margin:16px 0}.toggle-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toggle-line input{width:auto}.muted-list{margin:8px 0 0 18px;color:var(--muted);line-height:1.45}.muted-list li{margin:4px 0}
+    @media (max-width:960px){header{grid-template-columns:1fr}.field,.field.wide,.field.xwide,.field.small,.field.full{grid-column:span 12}.results,.site-grid,.role-grid,.fit-grid,.source-grid,.checklist,.two-col{grid-template-columns:1fr}.track-row{grid-template-columns:1fr}.hero{padding:23px}.wrap{padding:18px 12px 34px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <section class="hero">
+        <h1>ArepaJobs</h1>
+        <p>Trabajo remoto compatible con Venezuela. Busca vacantes freelance o remotas y filtra por idioma, medio de pago, permiso laboral, interacción social, dedicación, nivel educativo y área de experticia.</p>
+        <div class="badge-row">
+          <span class="badge">🇻🇪 Venezuela primero</span>
+          <span class="badge">💳 Pago compatible o verificable</span>
+          <span class="badge">💬 Español / Inglés</span>
+          <span class="badge">🧩 Preferencias de trabajo y neurodiversidad</span>
+          <span class="badge">🧰 Calificado y no especializado</span>
+        </div>
+      </section>
+      <aside class="side-card">
+        <div>
+          <h2>Panel rápido</h2>
+          <p class="hint">Modo recomendado: “Español o inglés”, “pago compatible o por verificar” y “excluir permisos laborales fuera de Venezuela”.</p>
+        </div>
+        <div class="stat">
+          <div><strong id="savedCount">0</strong><span>guardados</span></div>
+          <div><strong id="appliedCount">0</strong><span>postulados/entrevista</span></div>
+        </div>
+        <button onclick="showTab('profile')">Crear búsqueda por perfil</button>
+      </aside>
+    </header>
+
+    <nav class="tabs" aria-label="Secciones">
+      <button class="tab active" data-tab="search" onclick="showTab('search')">🔎 Buscar</button>
+      <button class="tab" data-tab="profile" onclick="showTab('profile')">🧭 Filtro por perfil</button>
+      <button class="tab" data-tab="roles" onclick="showTab('roles')">💼 Roles</button>
+      <button class="tab" data-tab="sites" onclick="showTab('sites')">🌐 Bolsas</button>
+      <button class="tab" data-tab="tracker" onclick="showTab('tracker')">📋 Seguimiento</button>
+      <button class="tab" data-tab="cv" onclick="showTab('cv')">📄 CV por vacante</button>
+      <button class="tab" data-tab="templates" onclick="showTab('templates')">✉️ Plantillas</button>
+    </nav>
+
+    <main>
+      <section id="search" class="tab-panel">
+        <div class="panel">
+          <h2>Buscador con filtros de compatibilidad</h2>
+          <p class="hint">La búsqueda automática usa vacantes públicas de Remotive. Como muchas empresas no publican el medio de pago, la app clasifica cada oferta como pago confirmado, por verificar o alerta incompatible.</p>
+          <div class="grid">
+            <div class="field xwide">
+              <label for="keyword">Cargo, habilidad o palabra clave</label>
+              <input id="keyword" value="" placeholder="Ej.: asistente virtual, tutor de español, data entry, transcripción, customer support" />
+              <div class="quick-row" aria-label="Búsquedas rápidas">
+                <button type="button" class="quick-chip" onclick="setKeyword('entry level data entry remote Spanish English')">Sin experiencia</button>
+                <button type="button" class="quick-chip" onclick="setKeyword('Spanish English translator localization remote')">Idiomas</button>
+                <button type="button" class="quick-chip" onclick="setKeyword('online tutor Spanish teacher instructional assistant remote')">Educación</button>
+                <button type="button" class="quick-chip" onclick="setKeyword('data annotation transcription QA remote asynchronous no phone')">Baja interacción</button>
+                <button type="button" class="quick-chip" onclick="setKeyword('chat email customer support remote Spanish English')">Soporte por chat</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="category">Área Remotive</label>
+              <select id="category">
+                <option value="">Todas</option>
+                <option value="customer-support">Customer Support</option>
+                <option value="writing">Writing</option>
+                <option value="marketing">Marketing</option>
+                <option value="sales">Sales</option>
+                <option value="teaching">Teaching</option>
+                <option value="qa">QA / Testing</option>
+                <option value="data">Data / Annotation</option>
+                <option value="all-others">Otras</option>
+              </select>
+            </div>
+            <div class="field small">
+              <label for="maxJobs">Resultados</label>
+              <select id="maxJobs"><option>10</option><option selected>20</option><option>30</option><option>50</option></select>
+            </div>
+
+            <div class="field">
+              <label for="relevanceFilter">Relevancia</label>
+              <select id="relevanceFilter">
+                <option value="strict" selected>Cargo/área relacionada</option>
+                <option value="balanced">También sector/empresa</option>
+                <option value="broad">Amplia sin filtrar</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="languageFilter">Idioma aceptado</label>
+              <select id="languageFilter">
+                <option value="en-es" selected>Español o inglés</option>
+                <option value="en">Inglés</option>
+                <option value="es">Español</option>
+                <option value="bilingual">Bilingüe ES/EN</option>
+                <option value="any">No filtrar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="paymentFilter">Medio de pago</label>
+              <select id="paymentFilter">
+                <option value="compatible_or_unknown" selected>Compatible o por verificar</option>
+                <option value="confirmed">Solo pago compatible mencionado</option>
+                <option value="hide_incompatible">Ocultar pagos claramente incompatibles</option>
+                <option value="any">No filtrar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="permitFilter">Permiso laboral</label>
+              <select id="permitFilter">
+                <option value="exclude" selected>Excluir permisos fuera de Venezuela</option>
+                <option value="warn">Mostrar con alerta</option>
+                <option value="any">No filtrar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="locationFilter">Ubicación aceptada</label>
+              <select id="locationFilter">
+                <option value="worldwide" selected>Worldwide / Anywhere / LATAM</option>
+                <option value="latam">LATAM</option>
+                <option value="americas">Americas</option>
+                <option value="not-us-only">Excluir US-only</option>
+                <option value="any">No filtrar</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="socialFilter">Interacción social</label>
+              <select id="socialFilter">
+                <option value="any" selected>No filtrar</option>
+                <option value="low">Baja interacción</option>
+                <option value="medium">Media interacción</option>
+                <option value="high">Alta interacción</option>
+                <option value="no_calls">Evitar llamadas/ventas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="hoursFilter">Horas de dedicación</label>
+              <select id="hoursFilter">
+                <option value="any" selected>No filtrar</option>
+                <option value="part_time">Medio tiempo / por horas</option>
+                <option value="full_time">Tiempo completo</option>
+                <option value="flexible">Flexible / asincrónico</option>
+                <option value="project">Por proyecto</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="educationFilter">Nivel educativo</label>
+              <select id="educationFilter">
+                <option value="any" selected>No filtrar</option>
+                <option value="no_degree">Sin título universitario</option>
+                <option value="technical">Técnico / oficio</option>
+                <option value="degree">Tercer nivel</option>
+                <option value="language_degree">Idiomas / comunicación</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="skillFilter">Tipo de perfil</label>
+              <select id="skillFilter">
+                <option value="any" selected>No filtrar</option>
+                <option value="non_specialized">No especializado</option>
+                <option value="semi_skilled">Semi-calificado</option>
+                <option value="skilled_trade">Mano de obra calificada</option>
+                <option value="professional">Profesional</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="expertiseFilter">Área de experticia</label>
+              <select id="expertiseFilter">
+                <option value="any" selected>Todas</option>
+                <option value="languages">Idiomas / traducción</option>
+                <option value="admin">Administración / asistencia</option>
+                <option value="customer">Atención al cliente</option>
+                <option value="data">Datos / anotación / IA</option>
+                <option value="education">Educación / tutorías</option>
+                <option value="tech">Tecnología / QA / soporte</option>
+                <option value="trades">Oficios / construcción / logística</option>
+                <option value="creative">Contenido / diseño / redes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="environmentFilter">Estilo de trabajo</label>
+              <select id="environmentFilter">
+                <option value="any" selected>No filtrar</option>
+                <option value="structured">Instrucciones estructuradas</option>
+                <option value="repetitive">Tareas repetitivas</option>
+                <option value="creative">Creativo / flexible</option>
+                <option value="async">Asincrónico</option>
+                <option value="detail">Alta atención al detalle</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button onclick="searchJobs()">Buscar vacantes</button>
+            <button class="secondary" onclick="openSearchPack()">Abrir búsquedas externas</button>
+            <button class="ghost" onclick="copySearchTerms()">Copiar términos útiles</button>
+            <button class="ghost" onclick="resetFilters()">Restablecer filtros</button>
+          </div>
+          <div id="message"></div>
+          <div id="results" class="results"></div>
+        </div>
+      </section>
+
+      <section id="profile" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Crear búsqueda por perfil amplio</h2>
+          <p class="hint">Esta sección no diagnostica ni etiqueta a la persona. Sirve para convertir preferencias de trabajo, formación, idioma y disponibilidad en términos de búsqueda más adecuados.</p>
+          <div class="grid">
+            <div class="field">
+              <label for="pEducation">Educación</label>
+              <select id="pEducation"><option value="no_degree">Sin título universitario</option><option value="technical">Técnico / oficio</option><option value="degree" selected>Tercer nivel</option><option value="student">Estudiante</option></select>
+            </div>
+            <div class="field">
+              <label for="pLanguages">Idiomas</label>
+              <select id="pLanguages"><option value="spanish">Solo español</option><option value="english_basic">Inglés básico</option><option value="english_intermediate">Inglés intermedio</option><option value="bilingual" selected>Bilingüe español/inglés</option></select>
+            </div>
+            <div class="field">
+              <label for="pInteraction">Interacción social preferida</label>
+              <select id="pInteraction"><option value="low">Baja</option><option value="medium" selected>Media</option><option value="high">Alta</option><option value="no_calls">Sin llamadas frecuentes</option></select>
+            </div>
+            <div class="field">
+              <label for="pHours">Disponibilidad</label>
+              <select id="pHours"><option value="part_time">Medio tiempo</option><option value="full_time" selected>Tiempo completo</option><option value="flexible">Flexible</option><option value="project">Por proyecto</option></select>
+            </div>
+            <div class="field">
+              <label for="pStructure">Estilo cognitivo/laboral</label>
+              <select id="pStructure"><option value="structured" selected>Instrucciones claras</option><option value="repetitive">Tareas repetitivas</option><option value="detail">Detalle y precisión</option><option value="creative">Creatividad</option><option value="multitask">Multitarea</option></select>
+            </div>
+            <div class="field">
+              <label for="pArea">Área principal</label>
+              <select id="pArea"><option value="languages" selected>Idiomas / comunicación</option><option value="admin">Administración</option><option value="customer">Atención al cliente</option><option value="data">Datos / IA</option><option value="trades">Oficios / logística</option><option value="education">Educación</option><option value="tech">Tecnología</option><option value="creative">Contenido</option></select>
+            </div>
+            <div class="field full">
+              <label for="pNotes">Fortalezas o limitaciones a considerar</label>
+              <textarea id="pNotes" placeholder="Ej: prefiere tareas escritas, no quiere llamadas, puede trabajar 4 h/día, tiene buena redacción, experiencia con herramientas de oficina..."></textarea>
+            </div>
+          </div>
+          <div class="actions"><button onclick="buildProfileSearch()">Generar búsqueda</button><button class="secondary" onclick="showTab('search')">Ir al buscador</button></div>
+          <div id="profileOutput" class="info hidden"></div>
+        </div>
+        <div class="panel">
+          <h2>Compatibilidad por tipo de perfil</h2>
+          <div id="fitGrid" class="fit-grid"></div>
+        </div>
+      </section>
+
+      <section id="roles" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Roles remotos recomendados</h2>
+          <p class="hint">Incluye opciones para perfiles profesionales, técnicos, mano de obra calificada y trabajo no especializado que pueda realizarse de forma remota o freelance.</p>
+          <div class="role-grid" id="roleGrid"></div>
+        </div>
+        <div class="panel">
+          <h2>Checklist antes de postular</h2>
+          <div class="checklist" id="checklist"></div>
+        </div>
+      </section>
+
+      <section id="sites" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Bolsas de empleo y plataformas útiles</h2>
+          <p class="hint">Los botones abren búsquedas con tus filtros actuales. Prioriza ofertas que indiquen “Worldwide”, “Latin America”, “Americas”, “contractor” o “freelance”.</p>
+          <div id="siteGrid" class="site-grid"></div>
+        </div>
+        <div class="panel">
+          <h2>Medios de pago: cómo interpretarlos</h2>
+          <div class="source-grid">
+            <article class="source-card"><h3>Compatible si aparece</h3><p>PayPal, Airtm, Payoneer, Deel, Ontop, Workana, Upwork escrow, transferencia internacional/SWIFT o pago freelance global.</p></article>
+            <article class="source-card"><h3>Por verificar</h3><p>“Bank transfer”, “direct deposit”, “contractor payment”, “global payroll” o “international transfer” sin país específico.</p></article>
+            <article class="source-card"><h3>Alerta</h3><p>Wise-only, ACH-only, US bank only, W‑2 employee, check, Venmo, Zelle-only o requisito de residencia/permiso laboral en EE. UU., Canadá, Reino Unido o Unión Europea.</p></article>
+          </div>
+        </div>
+        <div class="panel warning">
+          <strong>Seguridad:</strong>
+          <p class="hint">Desconfía de ofertas que pidan pagar para trabajar, comprar equipos a un proveedor específico, compartir claves, enviar documentos por canales informales o aceptar pagos triangulados. Verifica dominio corporativo, LinkedIn de la empresa y proceso de entrevista.</p>
+        </div>
+      </section>
+
+      <section id="tracker" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Seguimiento de postulaciones</h2>
+          <p class="hint">Guarda aquí cada vacante. Los datos quedan solo en este navegador mediante localStorage.</p>
+          <div class="grid">
+            <div class="field wide"><label>Vacante</label><input id="tTitle" placeholder="Ej: Remote Data Annotation Specialist" /></div>
+            <div class="field"><label>Empresa</label><input id="tCompany" placeholder="Empresa" /></div>
+            <div class="field"><label>Enlace</label><input id="tUrl" placeholder="https://..." /></div>
+            <div class="field small"><label>Estado</label><select id="tStatus"><option>Guardado</option><option>Postulado</option><option>Entrevista</option><option>Descartado</option></select></div>
+            <div class="field small"><label>Pago</label><select id="tPay"><option>Por verificar</option><option>Compatible</option><option>No compatible</option></select></div>
+          </div>
+          <div class="actions"><button onclick="addTrack()">Agregar</button><button class="secondary" onclick="exportCSV()">Exportar CSV</button><button class="ghost" onclick="clearTracker()">Limpiar</button></div>
+          <div id="trackerList"></div>
+        </div>
+      </section>
+
+
+      <section id="cv" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Perfil maestro para generar CV adaptado</h2>
+          <p class="hint">Completa este perfil una vez. La app lo usa para adaptar el CV a cada vacante sin inventar experiencia, títulos ni habilidades. Los datos quedan solo en este navegador.</p>
+          <div class="grid">
+            <div class="field wide"><label for="cvName">Nombre para el CV</label><input id="cvName" placeholder="Nombre y apellido" /></div>
+            <div class="field"><label for="cvLocation">Ubicación / zona horaria</label><input id="cvLocation" value="Venezuela · UTC-4" /></div>
+            <div class="field"><label for="cvContact">Contacto</label><input id="cvContact" placeholder="correo · teléfono · LinkedIn" /></div>
+            <div class="field"><label for="cvAvailability">Disponibilidad</label><input id="cvAvailability" placeholder="Ej: 20 h/semana, tiempo completo, horario flexible" /></div>
+            <div class="field"><label for="cvLanguages">Idiomas</label><input id="cvLanguages" placeholder="Ej: Español nativo; Inglés C1" /></div>
+            <div class="field"><label for="cvEducation">Educación</label><input id="cvEducation" placeholder="Ej: Licenciatura en Idiomas Modernos; Bachiller" /></div>
+            <div class="field full"><label for="cvExperience">Experiencia real</label><textarea id="cvExperience" placeholder="Escribe experiencia real en viñetas. Ej:\n- Docencia de inglés para adultos.\n- Traducción de textos académicos y comerciales.\n- Atención al cliente por correo y chat."></textarea></div>
+            <div class="field full"><label for="cvSkills">Habilidades comprobables</label><textarea id="cvSkills" placeholder="Ej: comunicación escrita, traducción, Excel, Canva, atención al detalle, soporte por tickets, investigación web, transcripción..."></textarea></div>
+            <div class="field full"><label for="cvTools">Herramientas y plataformas</label><textarea id="cvTools" placeholder="Ej: Google Workspace, Microsoft Office, Zoom, Slack, Trello, Canva, LMS, hojas de cálculo..."></textarea></div>
+            <div class="field full"><label for="cvConstraints">Preferencias, restricciones y medios de pago</label><textarea id="cvConstraints" placeholder="Ej: prefiere comunicación escrita, evita ventas telefónicas, acepta PayPal/Payoneer/Airtm/Deel, disponible como contractor/freelance..."></textarea></div>
+          </div>
+          <div class="actions">
+            <button onclick="saveMasterProfile()">Guardar perfil maestro</button>
+            <button class="secondary" onclick="loadMasterProfile(true)">Cargar perfil guardado</button>
+            <button class="ghost" onclick="clearMasterProfile()">Limpiar formulario</button>
+          </div>
+          <div id="cvProfileMessage"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Vacante objetivo</h2>
+          <p class="hint">Puedes abrir esta sección desde una vacante usando “Generar CV”, o pegar manualmente una oferta encontrada en otro portal.</p>
+          <div class="grid">
+            <div class="field wide"><label for="jobTargetTitle">Cargo de la vacante</label><input id="jobTargetTitle" placeholder="Ej: Online Spanish Tutor" /></div>
+            <div class="field"><label for="jobTargetCompany">Empresa</label><input id="jobTargetCompany" placeholder="Empresa" /></div>
+            <div class="field"><label for="jobTargetLanguage">Idioma del CV</label><select id="jobTargetLanguage"><option value="auto" selected>Automático</option><option value="es">Español</option><option value="en">Inglés</option></select></div>
+            <div class="field full"><label for="jobTargetDescription">Descripción de la vacante</label><textarea id="jobTargetDescription" placeholder="Pega aquí requisitos, responsabilidades y descripción completa de la vacante."></textarea></div>
+            <div class="field full"><label for="jobTargetUrl">Enlace de la vacante</label><input id="jobTargetUrl" placeholder="https://..." /></div>
+          </div>
+          <div class="actions">
+            <button onclick="generateCV()">Generar CV adaptado</button>
+            <button class="secondary" onclick="generateCoverLetter()">Generar mensaje de postulación</button>
+            <button class="ghost" onclick="copyText('cvOutput')">Copiar CV</button>
+            <button class="ghost" onclick="downloadCVTxt()">Descargar TXT</button>
+            <button class="ghost" onclick="window.print()">Imprimir / guardar como PDF</button>
+          </div>
+          <div id="cvJobMessage"></div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <h2>CV adaptado</h2>
+            <div class="copy-box" id="cvOutput">Aún no se ha generado un CV.</div>
+          </div>
+          <div class="panel">
+            <h2>Mensaje de postulación</h2>
+            <div class="copy-box" id="coverOutput">Aún no se ha generado un mensaje.</div>
+          </div>
+        </div>
+
+        <div class="panel warning">
+          <strong>Uso ético:</strong>
+          <p class="hint">El CV se adapta con la información real del perfil maestro. Revisa antes de enviar y elimina cualquier habilidad, herramienta o experiencia que la persona no pueda demostrar.</p>
+        </div>
+      </section>
+
+      <section id="templates" class="tab-panel hidden">
+        <div class="panel">
+          <h2>Plantillas rápidas</h2>
+          <p class="hint">Personaliza nombres, cargo, disponibilidad y método de pago. Mantén el mensaje breve.</p>
+          <h3>Mensaje corto para aplicar en inglés</h3>
+          <div class="copy-box" id="coverTemplate">Hello [Name],\n\nI am interested in the [Job Title] role. I am based in Venezuela and available for fully remote work as an independent contractor. I can work in English and Spanish, follow written procedures, and communicate clearly in asynchronous channels.\n\nBefore moving forward, could you please confirm whether candidates based in Venezuela are eligible and whether contractor payment can be made through PayPal, Payoneer, Airtm, Deel, international transfer, or another global payment method?\n\nI would be happy to share my CV and complete any required assessment.\n\nBest regards,\n[Your Name]</div>
+          <div class="actions"><button onclick="copyText('coverTemplate')">Copiar plantilla</button></div>
+          <h3>Mensaje corto para aplicar en español</h3>
+          <div class="copy-box" id="coverTemplateEs">Hola [Nombre],\n\nMe interesa la vacante de [Cargo]. Estoy en Venezuela y puedo trabajar de forma remota como contratista independiente. Tengo disponibilidad para trabajar en español y/o inglés, seguir procedimientos escritos y mantener comunicación organizada por canales digitales.\n\nAntes de avanzar, ¿podrían confirmarme si aceptan candidatos ubicados en Venezuela y si el pago puede realizarse por PayPal, Payoneer, Airtm, Deel, transferencia internacional u otro método global?\n\nQuedo atenta para enviar mi CV o realizar una prueba.\n\nSaludos,\n[Nombre]</div>
+          <div class="actions"><button onclick="copyText('coverTemplateEs')">Copiar plantilla</button></div>
+          <h3>Resumen para CV / LinkedIn</h3>
+          <div class="copy-box" id="profileTemplate">Bilingual remote worker based in Venezuela, available for contractor or freelance roles in English and Spanish. Strong written communication, attention to detail, organization, and ability to follow structured procedures. Interested in remote work related to virtual assistance, customer support, translation/localization, content review, data annotation, QA, transcription, education support, logistics coordination, or administrative support.</div>
+          <div class="actions"><button onclick="copyText('profileTemplate')">Copiar resumen</button></div>
+        </div>
+      </section>
+    </main>
+    <p class="footer">App estática. Funciona abriendo index.html en un navegador. Los filtros son heurísticos: antes de postular, confirma país aceptado, modalidad contractual, horario y método de pago.</p>
+  </div>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const REMOTIVE_API = 'https://remotive.com/api/remote-jobs?search=';
+    let displayedJobs = [];
+
+    const sites = [
+      {name:'Remotive', desc:'Bolsa remota con API pública y categorías por área.', base:'https://remotive.com/remote-jobs?search='},
+      {name:'We Work Remotely', desc:'Ofertas remotas por categoría; útil para “anywhere in the world”.', base:'https://weworkremotely.com/remote-jobs/search?term='},
+      {name:'Remote OK', desc:'Vacantes remote-only, tecnología, soporte, operaciones y contenido.', base:'https://remoteok.com/remote-'},
+      {name:'Working Nomads', desc:'Empleos remotos para trabajadores digitales internacionales.', base:'https://www.workingnomads.com/jobs?search='},
+      {name:'Remote.co', desc:'Bolsa remota con filtros por carrera y tipo de empleo.', base:'https://remote.co/remote-jobs/search/?search_keywords='},
+      {name:'LinkedIn', desc:'Filtra remoto y revisa si aceptan LATAM/Venezuela.', base:'https://www.linkedin.com/jobs/search/?f_WT=2&keywords='},
+      {name:'Indeed', desc:'Útil para búsquedas amplias con “remote worldwide contractor”.', base:'https://www.indeed.com/jobs?q='},
+      {name:'Contra', desc:'Freelance remoto, creativo, soporte, contenido y web.', base:'https://contra.com/discover?query='},
+      {name:'Upwork', desc:'Marketplace freelance; conviene crear perfil específico.', base:'https://www.upwork.com/nx/search/jobs/?q='},
+      {name:'Workana', desc:'Freelance en español para LATAM.', base:'https://www.workana.com/jobs?query='},
+      {name:'Torre', desc:'Trabajos remotos para LATAM y perfiles variados.', base:'https://torre.ai/search/jobs?q='},
+      {name:'Wellfound', desc:'Startups con roles remotos globales.', base:'https://wellfound.com/jobs?remote=true&keyword='}
+    ];
+
+    const rolePacks = {
+      non_specialized:[
+        ['Data entry remote','data entry remote worldwide contractor', 'Baja a media', 'No especializado'],
+        ['AI data annotation','AI data annotation Spanish English remote', 'Baja', 'No especializado'],
+        ['Transcripción / subtítulos','Spanish transcription captioning remote freelance', 'Baja', 'No especializado'],
+        ['Content moderation','content reviewer Spanish remote contractor', 'Media', 'No especializado'],
+        ['Encuestas / research assistant','online research assistant remote Spanish English', 'Baja', 'No especializado']
+      ],
+      semi_skilled:[
+        ['Virtual assistant','virtual assistant remote Spanish English contractor', 'Media', 'Semi-calificado'],
+        ['Email / chat support','email chat support remote Spanish English', 'Media', 'Semi-calificado'],
+        ['QA manual junior','junior manual QA tester remote', 'Baja', 'Semi-calificado'],
+        ['Appointment setter','appointment setter remote Spanish English LATAM', 'Alta', 'Semi-calificado'],
+        ['Back office assistant','back office assistant remote data admin', 'Baja', 'Semi-calificado']
+      ],
+      skilled_trade:[
+        ['Dispatcher para oficios','HVAC plumbing electrical dispatcher remote', 'Alta', 'Mano de obra calificada'],
+        ['Coordinador de servicios','field service coordinator remote contractor', 'Media', 'Mano de obra calificada'],
+        ['Estimador remoto','construction estimator remote freelance', 'Media', 'Mano de obra calificada'],
+        ['CAD / planos','CAD drafter remote freelance construction', 'Baja', 'Mano de obra calificada'],
+        ['Soporte técnico de oficio','solar construction technical support remote', 'Media', 'Mano de obra calificada']
+      ],
+      professional:[
+        ['Traducción / localización','Spanish English translator localization QA remote', 'Baja', 'Profesional'],
+        ['Tutoría online','online English Spanish tutor remote contractor', 'Alta', 'Profesional'],
+        ['Customer success','customer success specialist remote LATAM', 'Alta', 'Profesional'],
+        ['Content writer/editor','Spanish English content writer editor remote', 'Baja', 'Profesional'],
+        ['Project coordinator','remote project coordinator bilingual LATAM', 'Media', 'Profesional']
+      ]
+    };
+
+    const roles = Object.values(rolePacks).flat().map(([title, terms, interaction, level])=>({title,terms,interaction,level}));
+
+    const fitProfiles = [
+      {title:'Baja interacción social', best:'data annotation, transcription, QA manual, content review, translation, back office', avoid:'ventas telefónicas, call center intensivo, docencia en vivo'},
+      {title:'Alta interacción social', best:'customer support, appointment setter, tutor online, sales assistant, customer success', avoid:'tareas muy aisladas o repetitivas si necesita contacto constante'},
+      {title:'Preferencia por estructura', best:'QA, data entry, moderación, soporte por tickets, documentación', avoid:'roles ambiguos sin SOP ni entrenamiento'},
+      {title:'Creatividad y comunicación', best:'redacción, edición, redes sociales, localización, diseño básico, investigación web', avoid:'trabajos totalmente mecánicos si causan desmotivación'},
+      {title:'Oficios o experiencia práctica', best:'dispatcher, coordinador de servicios, estimador, soporte técnico de construcción/HVAC/solar', avoid:'ofertas que exijan presencia física fuera de Venezuela'},
+      {title:'Pocas horas disponibles', best:'freelance por proyecto, transcripción, tutorías por hora, microtareas, revisión de contenido', avoid:'full-time rígido con horario US/EU si no coincide'}
+    ];
+
+    const checks = [
+      'CV en inglés y/o español, adaptado al tipo de rol.',
+      'Título claro en LinkedIn: “Remote Bilingual Assistant / Data Annotation / Customer Support”.',
+      'Indicar ubicación: Venezuela, UTC−4, disponibilidad horaria exacta.',
+      'Preparar respuesta sobre modalidad: contractor/freelance, no empleado local.',
+      'Verificar país aceptado: Worldwide, LATAM, Americas o Venezuela.',
+      'Confirmar pago antes de pruebas largas: PayPal, Payoneer, Airtm, Deel, plataforma freelance o transferencia internacional.',
+      'Evitar vacantes con requisito de permiso laboral en EE. UU., Canadá, Reino Unido o Unión Europea.',
+      'Tener muestra de trabajo: traducción, redacción, hoja de cálculo, transcripción, tickets simulados o portafolio simple.',
+      'No pagar para trabajar, no comprar equipos por enlaces enviados por la empresa y no compartir claves.',
+      'Registrar fecha, empresa, enlace, pago, país aceptado y estado de cada postulación.'
+    ];
+
+    const goodPay = ['paypal','pay pal','payoneer','airtm','air tm','deel','ontop','remote.com','workana','upwork','contra','wise alternative','swift','international wire','wire transfer','global payroll','contractor payment','usd payment','pay in usd','usdt','crypto','cryptocurrency','binance','stablecoin','payoneer or paypal','international bank transfer'];
+    const badPay = ['wise only','wise account required','ach only','us bank only','u.s. bank only','american bank account','direct deposit only','w-2','w2 employee','venmo','zelle','cash app','check only','cheque only','sepa only','uk bank account','eu bank account','canadian bank account'];
+    const permitBad = ['must be authorized to work in the united states','authorized to work in the us','authorized to work in u.s.','us work authorization','u.s. work authorization','right to work in the us','right to work in the united states','eligible to work in the united states','must be a us citizen','u.s. citizen','green card','w-2 employee','w2 employee','must reside in the us','located in the united states','us residents only','usa only','u.s. only','united states only','canada only','canadian work authorization','authorized to work in canada','right to work in canada','uk work authorization','right to work in the uk','right to work in united kingdom','eu work authorization','right to work in the eu','european union only','germany only','spain only','netherlands only'];
+    const lowSocial = ['data entry','annotation','annotator','transcription','transcriber','caption','subtitle','qa tester','quality assurance','manual qa','proofreader','translator','translation','localization','content reviewer','content review','moderator','back office','research assistant','writer','editor','documentation','spreadsheet'];
+    const highSocial = ['sales','appointment setter','cold call','phone support','call center','customer success','account executive','business development','teacher','tutor','live class','community manager','recruiter'];
+    const mediumSocial = ['customer support','email support','chat support','virtual assistant','admin assistant','project coordinator','dispatcher','field service coordinator','operations assistant'];
+    const noCallsBad = ['phone','call center','cold call','calls','voice support','telemarketing','sales calls'];
+    const noDegreeGood = ['no degree required','degree not required','entry level','junior','training provided','data entry','annotation','transcription','customer support','virtual assistant','admin assistant'];
+    const degreeNeed = ['bachelor','degree required','university degree','college degree','bs degree','ba degree','licenciatura','master'];
+    const technicalNeed = ['cad','drafter','estimator','construction','hvac','solar','plumbing','electrical','technical support','field service'];
+    const stopSearchWords = ['remote','remoto','trabajo','work','job','jobs','online','freelance','contractor','venezuela','venezolano','venezolana','worldwide','anywhere','global','latam','latin','america','paypal','payoneer','airtm','deel','english','spanish','ingles','espanol','bilingual','bilingue','and','or','the','for','with','sin','con','para','por','de','la','el','en','y','o'];
+    const intentGroups = {
+      education: {
+        label: 'Educación/tutoría',
+        triggers: ['educacion','education','teaching','teacher','tutor','tutoring','profesor','profesora','docente','ensenanza','aprendizaje','instructional','curriculum','course','courses','school','academic','academy','training','lms','elearning','e-learning'],
+        titleTerms: ['teacher','tutor','teaching','instructional','curriculum','course','courses','education','educational','learning designer','academic','academy','training','lms','elearning','e-learning','profesor','profesora','docente','tutoria','ensenanza','educacion'],
+        textTerms: ['teach','teacher','tutor','tutoring','instructional design','curriculum','lesson plan','course design','course creator','education specialist','academic coach','lms','elearning','e-learning','profesor','profesora','docente','tutoria','ensenanza','diseno instruccional'],
+        sectorOnly: ['learners','students','education company','education platform','learning platform','edtech','educational platform']
+      },
+      languages: {label:'Idiomas/traducción', triggers:['idioma','idiomas','language','languages','translator','translation','localization','spanish','english','copywriter','editor','proofreader'], titleTerms:['translator','translation','localization','language','linguist','spanish','english','editor','proofreader','copywriter'], textTerms:['translator','translation','localization','language','linguist','bilingual','spanish','english','proofreading']},
+      admin: {label:'Administración/asistencia', triggers:['assistant','asistente','administracion','admin','virtual assistant','back office','operations','coordinator'], titleTerms:['assistant','admin','administrator','back office','operations assistant','coordinator','virtual assistant'], textTerms:['assistant','administrative','back office','operations','calendar','scheduling','coordinator']},
+      customer: {label:'Atención al cliente', triggers:['customer','support','cliente','soporte','chat','email support','helpdesk'], titleTerms:['customer support','support specialist','customer success','helpdesk','chat support','email support'], textTerms:['customer support','customer service','ticket','chat support','email support','helpdesk']},
+      data: {label:'Datos/IA', triggers:['data','datos','annotation','annotator','ai evaluator','transcription','transcriber','qa','tester'], titleTerms:['data','annotation','annotator','ai evaluator','transcription','transcriber','qa','tester','quality assurance'], textTerms:['data entry','data annotation','ai evaluator','transcription','qa tester','quality assurance','accuracy']},
+      tech: {label:'Tecnología/QA', triggers:['tech','technology','developer','engineer','qa','software','technical support','soporte tecnico'], titleTerms:['developer','engineer','software','qa','tester','technical support','it support'], textTerms:['software','code','developer','qa','testing','technical support','troubleshoot']},
+      trades: {label:'Oficios/logística', triggers:['oficio','oficios','trade','trades','construction','hvac','solar','dispatcher','estimator','cad','logistics'], titleTerms:['dispatcher','estimator','cad','drafter','construction','hvac','solar','logistics','field service'], textTerms:['dispatch','estimator','cad','construction','hvac','solar','logistics','field service','plumbing','electrical']},
+      creative: {label:'Contenido/creativo', triggers:['content','contenido','writer','writing','design','designer','social media','marketing','creative'], titleTerms:['content','writer','copywriter','editor','designer','social media','marketing','creative'], textTerms:['content','writing','copywriting','design','social media','marketing','creative','seo']}
+    };
+
+    function showTab(tab){
+      document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('hidden', p.id!==tab));
+      if(tab==='sites') renderSites();
+      if(tab==='roles') { renderRoles(); renderChecklist(); }
+      if(tab==='tracker') renderTracker();
+      if(tab==='profile') renderFitGrid();
+      if(tab==='cv') loadMasterProfile(false);
+    }
+
+    function getQuery(){
+      const base = expandSearchQuery($('keyword').value.trim());
+      const expertise = $('expertiseFilter').value;
+      const skill = $('skillFilter').value;
+      let extra = [];
+      if(expertise !== 'any') extra.push(expertiseTerms(expertise));
+      if(skill !== 'any') extra.push(skillTerms(skill));
+      return [base || 'remote work', ...extra].join(' ').replace(/\s+/g,' ').trim();
+    }
+    function expandSearchQuery(query){
+      const raw = normalize(query);
+      let extras = [];
+      Object.values(intentGroups).forEach(g=>{
+        if(g.triggers.some(t=>raw.includes(t))) extras.push(...g.titleTerms.slice(0,6));
+      });
+      return [...new Set([query, ...extras].filter(Boolean).join(' ').split(/\s+/))].join(' ');
+    }
+    function expertiseTerms(x){
+      return ({languages:'Spanish English translator localization bilingual', admin:'virtual assistant admin assistant back office', customer:'customer support chat email support', data:'data annotation AI evaluator data entry', education:'teacher tutor instructional curriculum online course education assistant', tech:'QA tester technical support', trades:'dispatcher estimator CAD construction HVAC solar', creative:'content writer social media editor'})[x] || '';
+    }
+    function skillTerms(x){
+      return ({non_specialized:'entry level no degree data entry annotation', semi_skilled:'assistant support coordinator junior', skilled_trade:'dispatcher estimator CAD construction technical', professional:'bilingual professional specialist'})[x] || '';
+    }
+
+    function siteURL(site){
+      const q = encodeURIComponent(getQuery() + ' remote worldwide Latin America contractor Venezuela PayPal Payoneer Airtm');
+      if(site.name==='Remote OK') return site.base + q.replaceAll('%20','-').replaceAll('%2F','-') + '-jobs';
+      return site.base + q;
+    }
+    function renderSites(){ $('siteGrid').innerHTML = sites.map(s=>`<article class="site"><h3>${s.name}</h3><p>${s.desc}</p><a class="btn secondary" target="_blank" rel="noopener" href="${siteURL(s)}">Abrir búsqueda</a></article>`).join(''); }
+    function renderRoles(){
+      $('roleGrid').innerHTML = roles.map(r=>`<article class="role-card"><h3>${r.title}</h3><p><strong>${r.level}</strong> · Interacción ${r.interaction}</p><div class="meta"><span class="pill">${r.terms}</span></div><button class="secondary" onclick="setKeyword('${escapeJS(r.terms)}')">Buscar este rol</button></article>`).join('');
+    }
+    function renderFitGrid(){ $('fitGrid').innerHTML = fitProfiles.map(f=>`<article class="fit-card"><h3>${f.title}</h3><p><strong>Conviene buscar:</strong> ${f.best}</p><p><strong>Revisar con cuidado:</strong> ${f.avoid}</p></article>`).join(''); }
+    function renderChecklist(){ $('checklist').innerHTML = checks.map((c,i)=>`<label class="check-item"><input type="checkbox" onchange="saveCheck(${i}, this.checked)" ${localStorage.getItem('check_'+i)==='1'?'checked':''}/> <span>${c}</span></label>`).join(''); }
+    function saveCheck(i,val){ localStorage.setItem('check_'+i,val?'1':'0'); }
+    function setKeyword(text){ $('keyword').value=text; showTab('search'); searchJobs(); }
+
+    async function searchJobs(){
+      const q = getQuery();
+      const max = Number($('maxJobs').value || 20);
+      const category = $('category').value;
+      const apiUrl = REMOTIVE_API + encodeURIComponent(q) + (category ? '&category=' + encodeURIComponent(category) : '');
+      $('message').innerHTML = '<div class="loading">Buscando y filtrando vacantes...</div>';
+      $('results').innerHTML = '';
+      try{
+        const res = await fetch(apiUrl);
+        if(!res.ok) throw new Error('No se pudo consultar el API.');
+        const data = await res.json();
+        const raw = data.jobs || [];
+        const evaluated = raw.map(evaluateJob).sort((a,b)=> (b._relevanceScore - a._relevanceScore) || (b._score - a._score));
+        const passed = evaluated.filter(x=>x.passed).slice(0,max);
+        const discarded = evaluated.length - passed.length;
+        if(!passed.length){
+          $('message').innerHTML = `<div class="error">No encontré vacantes que pasen todos los filtros. Prueba bajar el filtro de pago a “compatible o por verificar”, quitar interacción social o usar las búsquedas externas. Revisadas: ${raw.length}; descartadas: ${discarded}.</div>`;
+          return;
+        }
+        $('message').innerHTML = `<div class="success">Mostrando ${passed.length} vacantes compatibles o revisables. Revisadas: ${raw.length}; descartadas por filtros: ${discarded}. La relevancia ahora prioriza cargo/área, no solo empresas del sector. Confirma siempre país, contrato y pago antes de postular.</div>`;
+        displayedJobs = passed.map((j,i)=>({...j, _displayIndex:i}));
+        $('results').innerHTML = displayedJobs.map(jobCard).join('');
+      }catch(e){
+        $('message').innerHTML = '<div class="error">No se pudo cargar la búsqueda automática. Usa “Abrir búsquedas externas”; los filtros y términos de búsqueda siguen funcionando.</div>';
+      }
+      updateStats();
+    }
+
+    function evaluateJob(j){
+      const text = normalize([j.title,j.company_name,j.category,j.job_type,j.candidate_required_location,j.salary,stripHtml(j.description)].join(' '));
+      const loc = normalize(j.candidate_required_location || '');
+      const tags = [];
+      const reasons = [];
+      let passed = true;
+
+      const lang = detectLanguage(text);
+      const languageFilter = $('languageFilter').value;
+      if(languageFilter !== 'any'){
+        const langPass = languageFilter==='en-es' ? (lang.en || lang.es || lang.bilingual) : languageFilter==='en' ? lang.en : languageFilter==='es' ? lang.es : lang.bilingual;
+        if(!langPass){ passed=false; reasons.push('Idioma no coincide'); }
+      }
+      tags.push({label: lang.bilingual?'Bilingüe ES/EN':lang.es?'Español':lang.en?'Inglés':'Idioma por verificar', type: (lang.en||lang.es)?'ok':'warn'});
+
+      const pay = detectPayment(text);
+      const paymentFilter = $('paymentFilter').value;
+      if(paymentFilter==='confirmed' && pay.status!=='confirmed'){ passed=false; reasons.push('Pago compatible no mencionado'); }
+      if((paymentFilter==='hide_incompatible' || paymentFilter==='compatible_or_unknown') && pay.status==='bad'){ passed=false; reasons.push('Pago probablemente incompatible'); }
+      tags.push({label: pay.label, type: pay.status==='confirmed'?'ok':pay.status==='bad'?'bad':'warn'});
+
+      const permit = detectPermit(text + ' ' + loc);
+      if($('permitFilter').value==='exclude' && permit.bad){ passed=false; reasons.push('Requiere permiso/residencia fuera de Venezuela'); }
+      tags.push({label: permit.bad?'Alerta permiso laboral':'Sin permiso externo detectado', type: permit.bad?'bad':'ok'});
+
+      if(!locationPass(loc + ' ' + text)){ passed=false; reasons.push('Ubicación no compatible'); }
+      tags.push({label: j.candidate_required_location || 'Remote', type:'warn'});
+
+      const relevance = keywordRelevance(j, text);
+      if(!relevance.pass){ passed=false; reasons.push(relevance.reason); }
+      tags.push({label: relevance.label, type: relevance.type});
+
+      const social = detectSocial(text);
+      const socialFilter = $('socialFilter').value;
+      if(socialFilter==='low' && social.level==='high'){ passed=false; reasons.push('Interacción social alta'); }
+      if(socialFilter==='high' && social.level==='low'){ passed=false; reasons.push('Interacción social baja'); }
+      if(socialFilter==='medium' && social.level==='low'){ /* aceptable */ }
+      if(socialFilter==='no_calls' && containsAny(text, noCallsBad)){ passed=false; reasons.push('Probables llamadas/ventas'); }
+      tags.push({label:'Interacción ' + social.label, type:social.level==='high'?'warn':'ok'});
+
+      const hours = detectHours(text);
+      if(!hoursPass(hours, text)){ passed=false; reasons.push('Dedicación no coincide'); }
+      tags.push({label:hours.label, type:'warn'});
+
+      const education = detectEducation(text);
+      if(!educationPass(education, text)){ passed=false; reasons.push('Educación/perfil no coincide'); }
+      tags.push({label:education.label, type:education.type});
+
+      const environment = detectEnvironment(text);
+      if(!environmentPass(environment, text)){ passed=false; reasons.push('Estilo laboral no coincide'); }
+      tags.push({label:environment.label, type:'ok'});
+
+      const score = computeScore(tags, reasons, text);
+      return {...j, _text:text, _tags:tags, _reasons:reasons, _score:score, _relevanceScore: relevance.score, passed};
+    }
+
+    function keywordRelevance(j, text){
+      const mode = $('relevanceFilter')?.value || 'strict';
+      if(mode==='broad') return {pass:true, score:20, label:'Relevancia no filtrada', type:'warn', reason:''};
+      const raw = normalize($('keyword').value || '');
+      const title = normalize(j.title || '');
+      const category = normalize(j.category || '');
+      const titleCategory = title + ' ' + category;
+      const activeGroups = activeIntentGroups(raw);
+      if(!raw && !activeGroups.length) return {pass:true, score:40, label:'Sin palabra clave principal', type:'warn', reason:''};
+
+      if(activeGroups.some(g=>g.key==='education')){
+        const g = activeGroups.find(g=>g.key==='education').group;
+        const roleMatch = containsAny(titleCategory, g.titleTerms) || containsAny(titleCategory, ['teacher','tutor','instructional','curriculum','course','training','education','learning']);
+        const bodyRoleMatch = containsAny(text, g.textTerms);
+        const sectorOnly = containsAny(text, g.sectorOnly || []) || /(learners|students|edtech|education platform|learning platform)/.test(text);
+        const unrelatedEducationCompanyRole = sectorOnly && !roleMatch && !bodyRoleMatch;
+        if(roleMatch) return {pass:true, score:95, label:'Relevancia alta: rol educativo', type:'ok', reason:''};
+        if(bodyRoleMatch && mode==='balanced') return {pass:true, score:70, label:'Relevancia media: educación en descripción', type:'ok', reason:''};
+        if(bodyRoleMatch && mode==='strict') return {pass:true, score:62, label:'Relevancia media: tarea educativa', type:'ok', reason:''};
+        if(mode==='balanced' && sectorOnly) return {pass:true, score:42, label:'Relevancia baja: sector educativo', type:'warn', reason:''};
+        if(unrelatedEducationCompanyRole) return {pass:false, score:12, label:'Relevancia baja: empresa educativa, cargo no educativo', type:'bad', reason:'La palabra clave parece aparecer solo por el sector de la empresa, no por el cargo'};
+      }
+
+      let terms = keywordTerms(raw, activeGroups);
+      if(!terms.length) return {pass:true, score:40, label:'Relevancia por verificar', type:'warn', reason:''};
+      const titleHits = terms.filter(t=>titleCategory.includes(t));
+      const textHits = terms.filter(t=>text.includes(t));
+      if(titleHits.length) return {pass:true, score:90, label:'Relevancia alta: coincide con cargo/área', type:'ok', reason:''};
+      if(textHits.length && mode==='balanced') return {pass:true, score:55, label:'Relevancia media: coincide en descripción', type:'warn', reason:''};
+      if(textHits.length && mode==='strict') return {pass:false, score:28, label:'Relevancia baja: no coincide en cargo/área', type:'bad', reason:'La palabra clave no aparece en el cargo ni en el área principal'};
+      return {pass:false, score:5, label:'Relevancia baja: sin coincidencia clara', type:'bad', reason:'La vacante no coincide claramente con la palabra clave'};
+    }
+
+    function activeIntentGroups(raw){
+      const active = [];
+      const expertise = $('expertiseFilter')?.value || 'any';
+      Object.entries(intentGroups).forEach(([key,group])=>{
+        const byKeyword = raw && group.triggers.some(t=>raw.includes(t));
+        const byExpertise = expertise===key;
+        if(byKeyword || byExpertise) active.push({key, group});
+      });
+      return active;
+    }
+
+    function keywordTerms(raw, activeGroups){
+      let terms = raw.split(/[^a-z0-9]+/).filter(t=>t.length>2 && !stopSearchWords.includes(t));
+      activeGroups.forEach(({group})=>terms.push(...group.titleTerms, ...group.textTerms));
+      return [...new Set(terms.map(normalize).filter(t=>t.length>2 && !stopSearchWords.includes(t)))];
+    }
+
+    function detectLanguage(text){
+      const es = /\b(español|spanish|biling[uü]e|bilingual|latam|latin america|castellano)\b/.test(text) || /\b(el|la|los|las|para|con|remoto|trabajo|cliente|datos|asistente)\b/.test(text);
+      const en = /\b(english|fluent english|written english|remote|customer|support|assistant|contractor|worldwide|full-time|part-time|bilingual)\b/.test(text) || !es;
+      const bilingual = /\b(bilingual|spanish and english|english and spanish|español e ingl[eé]s|spanish\/english|en\/es)\b/.test(text);
+      return {es,en,bilingual};
+    }
+    function detectPayment(text){
+      if(containsAny(text, badPay)) return {status:'bad', label:'Alerta pago incompatible'};
+      const found = goodPay.find(k=>text.includes(k));
+      if(found) return {status:'confirmed', label:'Pago compatible mencionado: ' + found};
+      return {status:'unknown', label:'Pago por verificar'};
+    }
+    function detectPermit(text){ return {bad: containsAny(text, permitBad)}; }
+    function locationPass(text){
+      const f = $('locationFilter').value;
+      if(f==='any') return true;
+      const badUS = /\b(usa only|us only|u\.s\. only|united states only|must be located in the united states|only candidates in the united states)\b/.test(text);
+      const badRegion = /\b(canada only|uk only|europe only|eu only|germany only|spain only)\b/.test(text);
+      if(f==='not-us-only') return !badUS;
+      if(f==='latam') return /\b(latam|latin america|south america|americas|worldwide|anywhere|global|remote)\b/.test(text) && !badUS && !badRegion;
+      if(f==='americas') return /\b(americas|america|latam|latin america|south america|worldwide|anywhere|global|remote)\b/.test(text) && !badUS && !badRegion;
+      if(f==='worldwide') return /\b(worldwide|anywhere|global|latam|latin america|americas|remote)\b/.test(text) && !badUS && !badRegion;
+      return true;
+    }
+    function detectSocial(text){
+      if(containsAny(text, highSocial)) return {level:'high', label:'alta'};
+      if(containsAny(text, lowSocial)) return {level:'low', label:'baja'};
+      if(containsAny(text, mediumSocial)) return {level:'medium', label:'media'};
+      return {level:'unknown', label:'por verificar'};
+    }
+    function detectHours(text){
+      if(/\b(part[- ]time|part time|hourly|por horas|medio tiempo|20 hours|10 hours)\b/.test(text)) return {value:'part_time', label:'Medio tiempo/por horas'};
+      if(/\b(full[- ]time|full time|tiempo completo|40 hours)\b/.test(text)) return {value:'full_time', label:'Tiempo completo'};
+      if(/\b(flexible|flexible schedule|async|asynchronous|own schedule|horario flexible)\b/.test(text)) return {value:'flexible', label:'Flexible/asincrónico'};
+      if(/\b(project|freelance|contract|contractor|per project|por proyecto)\b/.test(text)) return {value:'project', label:'Contrato/proyecto'};
+      return {value:'unknown', label:'Horas por verificar'};
+    }
+    function hoursPass(hours, text){
+      const f = $('hoursFilter').value;
+      if(f==='any') return true;
+      if(hours.value===f) return true;
+      if(f==='flexible' && /\b(contractor|freelance|project|asynchronous|async)\b/.test(text)) return true;
+      if(f==='project' && /\b(contractor|freelance|contract)\b/.test(text)) return true;
+      return hours.value==='unknown';
+    }
+    function detectEducation(text){
+      if(containsAny(text, degreeNeed)) return {value:'degree', label:'Título requerido o preferido', type:'warn'};
+      if(containsAny(text, technicalNeed)) return {value:'technical', label:'Perfil técnico/oficio', type:'ok'};
+      if(containsAny(text, noDegreeGood)) return {value:'no_degree', label:'Sin título detectable', type:'ok'};
+      return {value:'unknown', label:'Educación por verificar', type:'warn'};
+    }
+    function educationPass(education, text){
+      const f = $('educationFilter').value;
+      const skill = $('skillFilter').value;
+      if(f==='any' && skill==='any') return true;
+      if(f==='no_degree' && education.value==='degree') return false;
+      if(f==='technical' && !(education.value==='technical' || containsAny(text, technicalNeed))) return education.value==='unknown';
+      if(f==='degree' && education.value==='no_degree') return true;
+      if(f==='language_degree' && !/\b(language|spanish|english|translator|translation|localization|writing|editor|communication)\b/.test(text)) return education.value==='unknown';
+      if(skill==='non_specialized' && education.value==='degree') return false;
+      if(skill==='skilled_trade' && !/\b(dispatcher|estimator|cad|construction|hvac|solar|plumbing|electrical|field service|logistics)\b/.test(text)) return education.value==='unknown';
+      if(skill==='professional' && /\b(data entry|entry level no degree|no degree required)\b/.test(text)) return true;
+      return true;
+    }
+    function detectEnvironment(text){
+      if(/\b(sop|procedure|structured|process|guideline|quality assurance|qa|ticket|documentation)\b/.test(text)) return {value:'structured', label:'Estructurado'};
+      if(/\b(repetitive|data entry|annotation|transcription|review|moderation)\b/.test(text)) return {value:'repetitive', label:'Repetitivo/detallado'};
+      if(/\b(asynchronous|async|written communication|email support|chat support)\b/.test(text)) return {value:'async', label:'Asincrónico/escrito'};
+      if(/\b(detail|accuracy|quality|proofread|editor|analyst)\b/.test(text)) return {value:'detail', label:'Alta atención al detalle'};
+      if(/\b(creative|design|content|writing|social media|marketing)\b/.test(text)) return {value:'creative', label:'Creativo'};
+      return {value:'unknown', label:'Estilo por verificar'};
+    }
+    function environmentPass(env, text){
+      const f = $('environmentFilter').value;
+      if(f==='any') return true;
+      if(env.value===f) return true;
+      if(f==='detail' && /\b(qa|quality|review|proofread|annotation|data|accuracy)\b/.test(text)) return true;
+      if(f==='async' && /\b(email|chat|written|documentation|translation|writer)\b/.test(text)) return true;
+      return env.value==='unknown';
+    }
+    function computeScore(tags, reasons, text){
+      let score = 70;
+      tags.forEach(t=>{ if(t.type==='ok') score += 4; if(t.type==='bad') score -= 30; if(t.type==='warn') score -= 2; });
+      if(/\b(worldwide|anywhere|latam|latin america|contractor|freelance)\b/.test(text)) score += 10;
+      if(reasons.length) score -= reasons.length*16;
+      return Math.max(0, Math.min(100, score));
+    }
+
+    function clean(html){ return stripHtml(html).replace(/\s+/g,' ').trim().slice(0,240); }
+    function stripHtml(html){ const div = document.createElement('div'); div.innerHTML = html || ''; return (div.textContent || div.innerText || ''); }
+    function normalize(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim(); }
+    function containsAny(text, list){ return list.some(k=>text.includes(k)); }
+    function escapeHtml(str){ return String(str??'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function escapeJS(str){ return String(str??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' '); }
+
+    function jobCard(j){
+      const title = escapeHtml(j.title || 'Vacante remota');
+      const company = escapeHtml(j.company_name || 'Empresa');
+      const loc = escapeHtml(j.candidate_required_location || 'Remote');
+      const category = escapeHtml(j.category || 'Remote');
+      const salary = escapeHtml(j.salary || 'Salario no indicado');
+      const desc = escapeHtml(clean(j.description));
+      const url = j.url || '#';
+      const tags = j._tags.map(t=>`<span class="pill ${t.type||''}">${escapeHtml(t.label)}</span>`).join('');
+      const reasons = j._reasons.length ? `<p class="mini"><strong>Alertas:</strong> ${escapeHtml(j._reasons.join('; '))}</p>` : '<p class="mini"><strong>Resultado:</strong> pasó los filtros seleccionados; confirmar detalles antes de postular.</p>';
+      return `<article class="job"><div class="toggle-line"><span class="score">${j._score}%</span><span class="hint">compatibilidad estimada</span></div><h3>${title}</h3><p><strong>${company}</strong></p><p>${desc}</p><div class="meta"><span class="pill">${loc}</span><span class="pill">${category}</span><span class="pill">${salary}</span>${tags}</div>${reasons}<div class="job-actions"><a class="btn" target="_blank" rel="noopener" href="${url}">Aplicar</a><button class="secondary" onclick="saveJob('${escapeJS(title)}','${escapeJS(company)}','${escapeJS(url)}','${escapeJS(j._tags.find(t=>t.label.startsWith('Pago'))?.label || 'Por verificar')}')">Guardar</button><button class="secondary" onclick="prepareCVFromJob(${j._displayIndex ?? 0})">Generar CV</button></div></article>`;
+    }
+
+
+    function masterProfileFields(){
+      return ['cvName','cvLocation','cvContact','cvAvailability','cvLanguages','cvEducation','cvExperience','cvSkills','cvTools','cvConstraints'];
+    }
+
+    function getMasterProfile(){
+      const obj = {};
+      masterProfileFields().forEach(id=>obj[id] = ($(id)?.value || '').trim());
+      return obj;
+    }
+
+    function saveMasterProfile(){
+      const profile = getMasterProfile();
+      if(!profile.cvName && !profile.cvExperience && !profile.cvSkills){
+        $('cvProfileMessage').innerHTML = '<div class="error">Agrega al menos nombre, experiencia o habilidades antes de guardar.</div>';
+        return;
+      }
+      localStorage.setItem('masterProfileCV', JSON.stringify(profile));
+      $('cvProfileMessage').innerHTML = '<div class="success">Perfil maestro guardado en este navegador.</div>';
+    }
+
+    function loadMasterProfile(showMessage=false){
+      const raw = localStorage.getItem('masterProfileCV');
+      if(!raw){ if(showMessage && $('cvProfileMessage')) $('cvProfileMessage').innerHTML = '<div class="info">No hay perfil guardado todavía.</div>'; return null; }
+      try{
+        const profile = JSON.parse(raw);
+        masterProfileFields().forEach(id=>{ if($(id) && profile[id] !== undefined) $(id).value = profile[id]; });
+        if(showMessage && $('cvProfileMessage')) $('cvProfileMessage').innerHTML = '<div class="success">Perfil maestro cargado.</div>';
+        return profile;
+      }catch(e){ return null; }
+    }
+
+    function clearMasterProfile(){
+      masterProfileFields().forEach(id=>{ if($(id)) $(id).value = id==='cvLocation' ? 'Venezuela · UTC-4' : ''; });
+      $('cvProfileMessage').innerHTML = '<div class="info">Formulario limpio. El perfil guardado no se borró.</div>';
+    }
+
+    function prepareCVFromJob(idx){
+      const j = displayedJobs[idx];
+      if(!j){ alert('No se pudo cargar la vacante.'); return; }
+      if($('jobTargetTitle')) $('jobTargetTitle').value = j.title || '';
+      if($('jobTargetCompany')) $('jobTargetCompany').value = j.company_name || '';
+      if($('jobTargetDescription')) $('jobTargetDescription').value = stripHtml(j.description || '').replace(/\s+/g,' ').trim();
+      if($('jobTargetUrl')) $('jobTargetUrl').value = j.url || '';
+      if($('jobTargetLanguage')) $('jobTargetLanguage').value = 'auto';
+      showTab('cv');
+      if($('cvJobMessage')) $('cvJobMessage').innerHTML = '<div class="success">Vacante cargada. Completa o revisa el perfil maestro y luego genera el CV.</div>';
+    }
+
+    function splitItems(text){
+      return String(text||'').split(/\n|;|•|- /).map(x=>x.replace(/^[-–—•\s]+/,'').trim()).filter(Boolean);
+    }
+
+    function detectOutputLanguage(){
+      const selected = $('jobTargetLanguage')?.value || 'auto';
+      if(selected !== 'auto') return selected;
+      const text = normalize(($('jobTargetTitle')?.value || '') + ' ' + ($('jobTargetDescription')?.value || ''));
+      const spanishHits = ['espanol','español','vacante','requisitos','experiencia','habilidades','remoto','cliente','educacion','docente'].filter(w=>text.includes(normalize(w))).length;
+      const englishHits = ['english','requirements','experience','skills','remote','customer','support','education','teacher','assistant'].filter(w=>text.includes(w)).length;
+      return englishHits >= spanishHits ? 'en' : 'es';
+    }
+
+    function vacancyKeywords(){
+      const text = normalize(($('jobTargetTitle')?.value || '') + ' ' + ($('jobTargetDescription')?.value || ''));
+      const dict = ['spanish','english','bilingual','translation','localization','teaching','teacher','tutor','curriculum','instructional','education','customer support','email support','chat support','data entry','data annotation','transcription','qa','quality assurance','virtual assistant','admin','back office','research','writing','editing','proofreading','excel','google workspace','microsoft office','slack','zoom','trello','canva','lms','remote','asynchronous','attention to detail','communication','organization','dispatcher','coordinator','estimator','cad','logistics'];
+      return dict.filter(k=>text.includes(k)).slice(0,18);
+    }
+
+    function rankItems(items, keywords){
+      const k = keywords.map(normalize);
+      return [...items].sort((a,b)=>{
+        const aa = normalize(a), bb = normalize(b);
+        const sa = k.reduce((n,x)=>n+(aa.includes(x)?2:0),0);
+        const sb = k.reduce((n,x)=>n+(bb.includes(x)?2:0),0);
+        return sb-sa;
+      });
+    }
+
+    function buildCVText(lang='es'){
+      const profile = getMasterProfile();
+      const title = ($('jobTargetTitle')?.value || '').trim();
+      const company = ($('jobTargetCompany')?.value || '').trim();
+      const url = ($('jobTargetUrl')?.value || '').trim();
+      const desc = ($('jobTargetDescription')?.value || '').trim();
+      if(!profile.cvName && !profile.cvExperience && !profile.cvSkills){
+        throw new Error('Completa el perfil maestro antes de generar el CV.');
+      }
+      if(!title && !desc){
+        throw new Error('Agrega el cargo o la descripción de la vacante.');
+      }
+      const keywords = vacancyKeywords();
+      const skillItems = rankItems(splitItems(profile.cvSkills), keywords).slice(0,12);
+      const expItems = rankItems(splitItems(profile.cvExperience), keywords).slice(0,8);
+      const toolItems = rankItems(splitItems(profile.cvTools), keywords).slice(0,10);
+      const roleLine = title ? (company ? `${title} · ${company}` : title) : (lang==='en' ? 'Target remote role' : 'Vacante objetivo');
+      const relevantTerms = keywords.length ? keywords.join(', ') : (lang==='en' ? 'review the vacancy keywords manually' : 'revisar manualmente las palabras clave de la vacante');
+
+      if(lang === 'en'){
+        return `${profile.cvName || '[Name]'}\n${[profile.cvContact, profile.cvLocation, profile.cvAvailability].filter(Boolean).join(' · ')}\n\nTARGET ROLE\n${roleLine}\n\nPROFESSIONAL SUMMARY\nRemote work candidate based in Venezuela, available for contractor/freelance opportunities. Profile adapted to this role using only the information provided in the master profile. Relevant strengths include ${skillItems.slice(0,5).join(', ') || 'communication, organization, attention to detail, and ability to follow written procedures'}.\n\nLANGUAGES\n${profile.cvLanguages || 'Spanish / English: specify level'}\n\nRELEVANT SKILLS\n${skillItems.length ? skillItems.map(x=>'• '+x).join('\n') : '• Add real skills from the master profile.'}\n\nRELEVANT EXPERIENCE\n${expItems.length ? expItems.map(x=>'• '+x).join('\n') : '• Add real experience from the master profile.'}\n\nTOOLS / PLATFORMS\n${toolItems.length ? toolItems.map(x=>'• '+x).join('\n') : '• Add real tools from the master profile.'}\n\nEDUCATION\n${profile.cvEducation || 'Add education only if true and verifiable.'}\n\nAVAILABILITY AND WORK CONDITIONS\n${profile.cvConstraints || 'Available for remote contractor/freelance work from Venezuela. Confirm payment method and country eligibility before applying.'}\n\nVACANCY KEYWORDS TO ADDRESS DURING APPLICATION\n${relevantTerms}\n${url ? `\nSource: ${url}` : ''}\n\nReview before sending: remove anything that is not accurate or demonstrable.`;
+      }
+
+      return `${profile.cvName || '[Nombre]'}\n${[profile.cvContact, profile.cvLocation, profile.cvAvailability].filter(Boolean).join(' · ')}\n\nVACANTE OBJETIVO\n${roleLine}\n\nRESUMEN PROFESIONAL\nCandidato/a para trabajo remoto desde Venezuela, disponible para oportunidades como contratista o freelance. Este CV fue adaptado a la vacante usando únicamente la información incluida en el perfil maestro. Fortalezas relevantes: ${skillItems.slice(0,5).join(', ') || 'comunicación, organización, atención al detalle y seguimiento de instrucciones escritas'}.\n\nIDIOMAS\n${profile.cvLanguages || 'Español / Inglés: especificar nivel'}\n\nHABILIDADES RELEVANTES\n${skillItems.length ? skillItems.map(x=>'• '+x).join('\n') : '• Agregar habilidades reales del perfil maestro.'}\n\nEXPERIENCIA RELEVANTE\n${expItems.length ? expItems.map(x=>'• '+x).join('\n') : '• Agregar experiencia real del perfil maestro.'}\n\nHERRAMIENTAS / PLATAFORMAS\n${toolItems.length ? toolItems.map(x=>'• '+x).join('\n') : '• Agregar herramientas reales del perfil maestro.'}\n\nEDUCACIÓN\n${profile.cvEducation || 'Agregar educación solo si es verdadera y verificable.'}\n\nDISPONIBILIDAD Y CONDICIONES DE TRABAJO\n${profile.cvConstraints || 'Disponible para trabajo remoto contractor/freelance desde Venezuela. Confirmar método de pago y elegibilidad por país antes de postular.'}\n\nPALABRAS CLAVE DE LA VACANTE PARA REVISAR\n${relevantTerms}\n${url ? `\nFuente: ${url}` : ''}\n\nRevisar antes de enviar: eliminar cualquier dato que no sea exacto o demostrable.`;
+    }
+
+    function generateCV(){
+      try{
+        const lang = detectOutputLanguage();
+        const text = buildCVText(lang);
+        $('cvOutput').innerText = text;
+        $('cvJobMessage').innerHTML = '<div class="success">CV generado. Revísalo y ajusta detalles antes de enviarlo.</div>';
+      }catch(e){
+        $('cvJobMessage').innerHTML = `<div class="error">${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function generateCoverLetter(){
+      try{
+        const profile = getMasterProfile();
+        const lang = detectOutputLanguage();
+        const title = ($('jobTargetTitle')?.value || '[Cargo]').trim();
+        const company = ($('jobTargetCompany')?.value || '[Empresa]').trim();
+        const skills = rankItems(splitItems(profile.cvSkills), vacancyKeywords()).slice(0,4).join(', ');
+        let msg;
+        if(lang==='en'){
+          msg = `Hello ${company !== '[Empresa]' ? company + ' team' : '[Name]'},\n\nI am interested in the ${title} role. I am based in Venezuela and available for fully remote contractor/freelance work. My relevant profile includes ${skills || 'written communication, organization, attention to detail, and the ability to follow structured procedures'}.\n\nBefore moving forward, could you please confirm whether candidates based in Venezuela are eligible and whether payment can be made through a global method such as PayPal, Payoneer, Airtm, Deel, international transfer, or the platform used by your company?\n\nI would be happy to share my adapted CV and complete a reasonable assessment.\n\nBest regards,\n${profile.cvName || '[Name]'}`;
+        }else{
+          msg = `Hola ${company !== '[Empresa]' ? 'equipo de ' + company : '[Nombre]'},\n\nMe interesa la vacante de ${title}. Estoy en Venezuela y tengo disponibilidad para trabajo remoto como contratista o freelance. Mi perfil relevante incluye ${skills || 'comunicación escrita, organización, atención al detalle y capacidad para seguir procedimientos estructurados'}.\n\nAntes de avanzar, ¿podrían confirmar si aceptan candidatos ubicados en Venezuela y si el pago puede realizarse por un método global como PayPal, Payoneer, Airtm, Deel, transferencia internacional o la plataforma que utilice la empresa?\n\nCon gusto puedo enviar mi CV adaptado y realizar una prueba razonable.\n\nSaludos,\n${profile.cvName || '[Nombre]'}`;
+        }
+        $('coverOutput').innerText = msg;
+        $('cvJobMessage').innerHTML = '<div class="success">Mensaje de postulación generado.</div>';
+      }catch(e){
+        $('cvJobMessage').innerHTML = `<div class="error">${escapeHtml(e.message)}</div>`;
+      }
+    }
+
+    function downloadCVTxt(){
+      const text = $('cvOutput')?.innerText || '';
+      if(!text || text.includes('Aún no se ha generado')){ alert('Primero genera el CV.'); return; }
+      const name = normalize(($('cvName')?.value || 'cv_adaptado')).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'') || 'cv_adaptado';
+      const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download=`${name}_remoto_venezuela.txt`; a.click(); URL.revokeObjectURL(url);
+    }
+
+    function buildProfileSearch(){
+      const edu=$('pEducation').value, lang=$('pLanguages').value, inter=$('pInteraction').value, hours=$('pHours').value, structure=$('pStructure').value, area=$('pArea').value;
+      let terms=[];
+      terms.push(expertiseTerms(area));
+      if(lang==='spanish') terms.push('Spanish remote LATAM');
+      if(lang==='english_basic') terms.push('Spanish remote data entry beginner English');
+      if(lang==='english_intermediate') terms.push('English Spanish remote assistant support');
+      if(lang==='bilingual') terms.push('bilingual Spanish English remote');
+      if(inter==='low') { terms.push('asynchronous written no phone data annotation transcription QA'); $('socialFilter').value='low'; }
+      if(inter==='medium') { terms.push('email chat support assistant coordinator'); $('socialFilter').value='medium'; }
+      if(inter==='high') { terms.push('customer support tutor appointment setter'); $('socialFilter').value='high'; }
+      if(inter==='no_calls') { terms.push('email chat support no phone asynchronous'); $('socialFilter').value='no_calls'; }
+      if(hours==='part_time') { terms.push('part-time hourly freelance'); $('hoursFilter').value='part_time'; }
+      if(hours==='full_time') { terms.push('full-time contractor'); $('hoursFilter').value='full_time'; }
+      if(hours==='flexible') { terms.push('flexible schedule asynchronous contractor'); $('hoursFilter').value='flexible'; }
+      if(hours==='project') { terms.push('freelance project based'); $('hoursFilter').value='project'; }
+      if(structure==='structured') { terms.push('SOP procedure quality'); $('environmentFilter').value='structured'; }
+      if(structure==='repetitive') { terms.push('repetitive data entry annotation review'); $('environmentFilter').value='repetitive'; }
+      if(structure==='detail') { terms.push('detail accuracy QA review'); $('environmentFilter').value='detail'; }
+      if(structure==='creative') { terms.push('content writing creative'); $('environmentFilter').value='creative'; }
+      if(structure==='multitask') terms.push('operations assistant coordinator multitask');
+      if(edu==='no_degree') { $('educationFilter').value='no_degree'; $('skillFilter').value='non_specialized'; }
+      if(edu==='technical') { $('educationFilter').value='technical'; $('skillFilter').value='skilled_trade'; }
+      if(edu==='degree') { $('educationFilter').value='degree'; }
+      $('expertiseFilter').value=area;
+      $('languageFilter').value = lang==='spanish' ? 'es' : lang==='bilingual' ? 'bilingual' : 'en-es';
+      $('permitFilter').value='exclude'; $('paymentFilter').value='compatible_or_unknown'; $('locationFilter').value='worldwide'; $('relevanceFilter').value='strict';
+      const finalTerms = [...new Set(terms.join(' ').split(/\s+/))].join(' ');
+      $('keyword').value = finalTerms;
+      $('profileOutput').classList.remove('hidden');
+      $('profileOutput').innerHTML = `<strong>Búsqueda generada:</strong><br>${escapeHtml(finalTerms)}<div class="actions"><button onclick="showTab('search'); searchJobs()">Buscar ahora</button><button class="secondary" onclick="copySearchTerms()">Copiar términos</button></div>`;
+    }
+
+    function resetFilters(){
+      $('languageFilter').value='en-es'; $('paymentFilter').value='compatible_or_unknown'; $('permitFilter').value='exclude'; $('locationFilter').value='worldwide'; $('socialFilter').value='any'; $('hoursFilter').value='any'; $('educationFilter').value='any'; $('skillFilter').value='any'; $('expertiseFilter').value='any'; $('environmentFilter').value='any'; $('relevanceFilter').value='strict'; $('category').value='';
+      $('message').innerHTML='<div class="info">Filtros restablecidos al modo recomendado para Venezuela.</div>';
+    }
+
+    function getTracks(){ return JSON.parse(localStorage.getItem('tracks') || '[]'); }
+    function setTracks(arr){ localStorage.setItem('tracks', JSON.stringify(arr)); updateStats(); }
+    function saveJob(title, company, url, pay='Por verificar'){
+      const arr = getTracks();
+      arr.unshift({title, company, url, pay, status:'Guardado', date:new Date().toISOString().slice(0,10)});
+      setTracks(arr); $('message').innerHTML = '<div class="success">Vacante guardada en seguimiento.</div>';
+    }
+    function addTrack(){
+      const title=$('tTitle').value.trim(), company=$('tCompany').value.trim(), url=$('tUrl').value.trim(), status=$('tStatus').value, pay=$('tPay').value;
+      if(!title){ alert('Agrega el nombre de la vacante.'); return; }
+      const arr=getTracks(); arr.unshift({title,company,url,status,pay,date:new Date().toISOString().slice(0,10)}); setTracks(arr);
+      $('tTitle').value=''; $('tCompany').value=''; $('tUrl').value=''; renderTracker();
+    }
+    function renderTracker(){
+      const arr=getTracks();
+      if(!arr.length){ $('trackerList').innerHTML='<p class="hint">Aún no hay postulaciones guardadas.</p>'; updateStats(); return; }
+      $('trackerList').innerHTML=arr.map((t,i)=>`<div class="track-row"><input value="${escapeHtml(t.title)}" onchange="editTrack(${i},'title',this.value)"><input value="${escapeHtml(t.company||'')}" onchange="editTrack(${i},'company',this.value)"><input value="${escapeHtml(t.url||'')}" onchange="editTrack(${i},'url',this.value)"><select onchange="editTrack(${i},'status',this.value)">${['Guardado','Postulado','Entrevista','Descartado'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select><select onchange="editTrack(${i},'pay',this.value)">${['Por verificar','Compatible','No compatible'].map(s=>`<option ${t.pay===s?'selected':''}>${s}</option>`).join('')}</select><button class="ghost" onclick="deleteTrack(${i})">Eliminar</button></div>`).join('');
+      updateStats();
+    }
+    function editTrack(i,key,val){ const arr=getTracks(); arr[i][key]=val; setTracks(arr); }
+    function deleteTrack(i){ const arr=getTracks(); arr.splice(i,1); setTracks(arr); renderTracker(); }
+    function clearTracker(){ if(confirm('¿Borrar todo el seguimiento?')){ setTracks([]); renderTracker(); } }
+    function updateStats(){ const arr=getTracks(); $('savedCount').textContent=arr.length; $('appliedCount').textContent=arr.filter(x=>['Postulado','Entrevista'].includes(x.status)).length; }
+
+    function exportCSV(){
+      const arr=getTracks();
+      const rows = [['Fecha','Vacante','Empresa','Estado','Pago','Enlace'], ...arr.map(t=>[t.date,t.title,t.company,t.status,t.pay,t.url])];
+      const csv = rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='seguimiento_postulaciones_remotas_venezuela.csv'; a.click(); URL.revokeObjectURL(url);
+    }
+    function openSearchPack(){ sites.slice(0,8).forEach(s=>window.open(siteURL(s),'_blank','noopener')); }
+    function copySearchTerms(){
+      const q = `${getQuery()}\nremote worldwide\nremote Latin America\ncontractor Venezuela\nEnglish Spanish bilingual\nPayPal Payoneer Airtm Deel\nno US work authorization required\nasynchronous remote\nentry level remote\npart-time freelance remote`;
+      navigator.clipboard.writeText(q);
+      const target = $('message') || $('profileOutput');
+      target.innerHTML = '<div class="success">Términos copiados.</div>';
+    }
+    function copyText(id){ navigator.clipboard.writeText($(id).innerText); alert('Texto copiado.'); }
+
+    renderSites(); renderRoles(); renderChecklist(); renderFitGrid(); updateStats();
+  </script>
+</body>
+</html>
